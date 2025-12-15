@@ -16,7 +16,7 @@
               <button class="btn btn-danger btn-lg">
                 <i class="bi-play-fill"></i> Watch Now
               </button>
-              <button class="btn btn-outline-light btn-lg">
+              <button class="btn btn-outline-light btn-lg" type="button" @click="openInfo(slide)">
                 <i class="bi-info-circle"></i> More Info
               </button>
             </div>
@@ -32,10 +32,41 @@
       <i class="bi-chevron-right"></i>
     </button>
   </div>
+
+  <teleport to="body">
+    <div
+      v-if="isInfoOpen && selectedSlide"
+      class="kflix-preview-backdrop"
+      role="presentation"
+      @click="closeInfo"
+    >
+      <div class="kflix-preview-modal" role="dialog" aria-modal="true" @click.stop>
+        <button
+          type="button"
+          class="kflix-preview-close"
+          aria-label="Close"
+          @click="closeInfo"
+        >
+          <i class="bi-x-lg"></i>
+        </button>
+
+        <div class="kflix-preview-hero" :style="{ backgroundImage: `url(${selectedSlide.imageUrl})` }">
+          <div class="kflix-preview-hero-overlay">
+            <span class="badge bg-danger mb-2">{{ selectedSlide.badge }}</span>
+            <h3 class="kflix-preview-title">{{ selectedSlide.title }}</h3>
+            <p class="kflix-preview-description">{{ selectedSlide.description }}</p>
+            <button type="button" class="btn btn-outline-light btn-sm" @click="closeInfo">
+              <i class="bi-arrow-left"></i> Back
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </teleport>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, ref, watch } from 'vue'
 import type { HeroSlide } from '@/types'
 
 const props = defineProps<{
@@ -44,6 +75,31 @@ const props = defineProps<{
 
 const currentIndex = ref(0)
 let intervalId: number
+
+const selectedSlide = ref<HeroSlide | null>(null)
+const isInfoOpen = ref(false)
+
+const openInfo = (slide: HeroSlide) => {
+  selectedSlide.value = slide
+  isInfoOpen.value = true
+}
+
+const closeInfo = () => {
+  isInfoOpen.value = false
+}
+
+const onKeyDown = (e: KeyboardEvent) => {
+  if (e.key === 'Escape') closeInfo()
+}
+
+watch(isInfoOpen, (open) => {
+  if (typeof window === 'undefined') return
+  if (open) {
+    window.addEventListener('keydown', onKeyDown)
+  } else {
+    window.removeEventListener('keydown', onKeyDown)
+  }
+})
 
 const nextSlide = () => {
   currentIndex.value = (currentIndex.value + 1) % props.slides.length
@@ -59,5 +115,8 @@ onMounted(() => {
 
 onUnmounted(() => {
   clearInterval(intervalId)
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('keydown', onKeyDown)
+  }
 })
 </script>

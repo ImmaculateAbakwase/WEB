@@ -1,14 +1,24 @@
 <template>
   <div class="content-card" @click="handleClick">
     <div class="card-image">
-      <img v-if="imageUrl" :src="imageUrl" :alt="title" />
+      <img v-if="imageUrl" :src="imageUrl" :alt="title" draggable="false" />
       <div v-else class="card-placeholder" :style="{ background: randomGradient }">
         <i v-if="icon" :class="icon" class="card-icon"></i>
       </div>
       <span v-if="badge" class="card-badge">{{ badge }}</span>
+      <button
+        v-if="showChevron"
+        type="button"
+        class="card-chevron"
+        aria-label="Scroll"
+        @pointerdown.stop
+        @click.stop="handleChevronClick"
+      >
+        <i class="bi-chevron-right"></i>
+      </button>
     </div>
     <div class="card-content">
-      <div class="card-title">{{ title }}</div>
+      <div class="card-title" :title="title">{{ title }}</div>
       <div class="card-meta">
         <span v-if="rating">
           <i class="bi-star-fill text-warning"></i> {{ rating }}
@@ -22,17 +32,19 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-const props = defineProps<{
+defineProps<{
   title: string
   badge?: string
   rating?: number
   meta?: string
   icon?: string
   imageUrl?: string
+  showChevron?: boolean
 }>()
 
 const emit = defineEmits<{
   click: []
+  chevron: []
 }>()
 
 const randomGradient = computed(() => {
@@ -49,5 +61,9 @@ const randomGradient = computed(() => {
 
 const handleClick = () => {
   emit('click')
+}
+
+const handleChevronClick = () => {
+  emit('chevron')
 }
 </script>
