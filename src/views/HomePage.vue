@@ -13,7 +13,7 @@
 
     <!-- Rails -->
     <div v-for="rail in rails" :key="rail.id" class="content-section">
-      <SectionHeader :title="rail.title" :icon="rail.icon" :show-view-all="true" />
+      <SectionHeader :title="rail.title" :show-view-all="true" />
 
       <div class="horizontal-scroll-wrapper">
         <button
@@ -36,7 +36,6 @@
             :rating="item.rating"
             :meta="item.meta"
             :image-url="item.imageUrl"
-            :icon="rail.cardIcon"
             :show-chevron="rail.canScrollRight && idx === rail.lastVisibleIndex"
             @chevron="scrollRail(rail, 1)"
           />
@@ -105,8 +104,6 @@ type ContentItem = {
 type Rail = {
   id: RailId
   title: string
-  icon: string
-  cardIcon?: string
   items: ContentItem[]
   el: HTMLElement | null
   canScrollLeft: boolean
@@ -137,11 +134,9 @@ const podcasts: ContentItem[] = [
   { id: 'p8', title: 'Sports Talk Daily', meta: '780K subscribers', imageUrl: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=400' },
 ]
 
-const buildRail = (id: RailId, title: string, icon: string, items: ContentItem[], cardIcon?: string): Rail => ({
+const buildRail = (id: RailId, title: string, items: ContentItem[]): Rail => ({
   id,
   title,
-  icon,
-  cardIcon,
   items,
   el: null,
   canScrollLeft: false,
@@ -150,7 +145,7 @@ const buildRail = (id: RailId, title: string, icon: string, items: ContentItem[]
 })
 
 const rails = ref<Rail[]>([
-  buildRail('trending', '🔥 Top 10 Trending Movies', 'bi-fire', contentStore.trendingMovies.map(m => ({
+  buildRail('trending', '🔥 Top 10 Trending Movies', contentStore.trendingMovies.map(m => ({
     id: m.id,
     title: m.title,
     badge: m.badge,
@@ -158,29 +153,29 @@ const rails = ref<Rail[]>([
     meta: String(m.year),
     imageUrl: m.imageUrl
   }))),
-  buildRail('music', '🎵 Trending Music', 'bi-music-note-beamed', contentStore.musicPlaylists.map(p => ({
+  buildRail('music', '🎵 Trending Music', contentStore.musicPlaylists.map(p => ({
     id: p.id,
     title: p.title,
     badge: p.badge,
     meta: `${p.tracks} tracks`,
     imageUrl: p.imageUrl
-  })), 'bi-music-note-list'),
-  buildRail('live', '📺 Live Now', 'bi-broadcast', liveStreams, 'bi-play-circle-fill'),
-  buildRail('creators', '⭐ Popular Creators', 'bi-play-btn-fill', contentStore.creators.map(c => ({
+  }))),
+  buildRail('live', '📺 Live Now', liveStreams),
+  buildRail('creators', '⭐ Popular Creators', contentStore.creators.map(c => ({
     id: c.id,
     title: c.name,
     badge: c.badge,
     meta: `${c.subscribers} subs`,
     imageUrl: c.imageUrl
-  })), 'bi-person-circle'),
-  buildRail('games', '🎮 Popular Games', 'bi-controller', contentStore.games.map(g => ({
+  }))),
+  buildRail('games', '🎮 Popular Games', contentStore.games.map(g => ({
     id: g.id,
     title: g.title,
     badge: g.badge,
     meta: `${g.players} playing`,
     imageUrl: g.imageUrl
-  })), 'bi-joystick'),
-  buildRail('podcasts', '🎙️ Top Podcasts', 'bi-mic-fill', podcasts, 'bi-headphones'),
+  }))),
+  buildRail('podcasts', '🎙️ Top Podcasts', podcasts),
 ])
 
 const initializedRails = new Set<RailId>()
