@@ -2,13 +2,6 @@
   <div class="main-content" :class="appStore.sidebarCollapsed ? 'collapsed' : 'expanded'">
     <PageHeader :title="route.meta.title as string" />
 
-    <div class="d-flex justify-content-end mb-3 px-3">
-      <router-link to="/auth/login" class="btn btn-outline-light btn-sm">
-        <i class="bi-box-arrow-in-right me-1"></i>
-        Sign In
-      </router-link>
-    </div>
-
     <HeroCarousel :slides="contentStore.heroSlides" />
 
     <!-- Rails -->
@@ -145,7 +138,7 @@ const buildRail = (id: RailId, title: string, items: ContentItem[]): Rail => ({
 })
 
 const rails = ref<Rail[]>([
-  buildRail('trending', '🔥 Top 10 Trending Movies', contentStore.trendingMovies.map(m => ({
+  buildRail('trending', '🔥 Trending Movies & Originals', contentStore.trendingMovies.map(m => ({
     id: m.id,
     title: m.title,
     badge: m.badge,
@@ -153,22 +146,22 @@ const rails = ref<Rail[]>([
     meta: String(m.year),
     imageUrl: m.imageUrl
   }))),
-  buildRail('music', '🎵 Trending Music', contentStore.musicPlaylists.map(p => ({
+  buildRail('music', '🎵 Trending Music & Playlists', contentStore.musicPlaylists.map(p => ({
     id: p.id,
     title: p.title,
     badge: p.badge,
     meta: `${p.tracks} tracks`,
     imageUrl: p.imageUrl
   }))),
-  buildRail('live', '📺 Live Now', liveStreams),
-  buildRail('creators', '⭐ Popular Creators', contentStore.creators.map(c => ({
+  buildRail('live', '📺 Live Events & Shows', liveStreams),
+  buildRail('creators', '⭐ Latest Creator Videos', contentStore.creators.map(c => ({
     id: c.id,
     title: c.name,
     badge: c.badge,
     meta: `${c.subscribers} subs`,
     imageUrl: c.imageUrl
   }))),
-  buildRail('games', '🎮 Popular Games', contentStore.games.map(g => ({
+  buildRail('games', '🎮 Featured & Popular Games', contentStore.games.map(g => ({
     id: g.id,
     title: g.title,
     badge: g.badge,
@@ -222,12 +215,22 @@ const enableDragScroll = (el: HTMLElement) => {
     moved = false
   }
 
+  const onWheel = (e: WheelEvent) => {
+    const hasOverflow = el.scrollWidth > el.clientWidth + 1
+    if (!hasOverflow) return
+
+    if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return
+    e.preventDefault()
+    el.scrollLeft += e.deltaY
+  }
+
   el.addEventListener('pointerdown', onPointerDown)
   el.addEventListener('pointermove', onPointerMove)
   el.addEventListener('pointerup', stop)
   el.addEventListener('pointercancel', stop)
   el.addEventListener('pointerleave', stop)
   el.addEventListener('click', onClickCapture, true)
+  el.addEventListener('wheel', onWheel, { passive: false })
 
   dragCleanups.push(() => {
     el.removeEventListener('pointerdown', onPointerDown)
@@ -236,6 +239,7 @@ const enableDragScroll = (el: HTMLElement) => {
     el.removeEventListener('pointercancel', stop)
     el.removeEventListener('pointerleave', stop)
     el.removeEventListener('click', onClickCapture, true)
+    el.removeEventListener('wheel', onWheel as any)
   })
 }
 
@@ -247,14 +251,50 @@ const setupRailRuntime = (rail: Rail, el: HTMLElement) => {
   el.addEventListener('scroll', update, { passive: true })
   window.addEventListener('resize', update)
 
+  let resizeObserver: ResizeObserver | null = null
+  if (typeof window !== 'undefined' && 'ResizeObserver' in window) {
+    resizeObserver = new ResizeObserver(() => update())
+    resizeObserver.observe(el)
+  }
+
+  const imageCleanups: (() => void)[] = []
+  const images = Array.from(el.querySelectorAll('img'))
+  for (const img of images) {
+    const onImg = () => update()
+    if (!img.complete) {
+      img.addEventListener('load', onImg, { once: true })
+      img.addEventListener('error', onImg, { once: true })
+      imageCleanups.push(() => {
+        img.removeEventListener('load', onImg)
+        img.removeEventListener('error', onImg)
+      })
+    }
+  }
+
+  let settleInterval: number | null = null
+  if (typeof window !== 'undefined') {
+    let ticks = 0
+    settleInterval = window.setInterval(() => {
+      update()
+      ticks += 1
+      if (ticks > 16 && settleInterval) {
+        window.clearInterval(settleInterval)
+        settleInterval = null
+      }
+    }, 250)
+  }
+
   scrollStateCleanups.push(() => {
     el.removeEventListener('scroll', update)
     window.removeEventListener('resize', update)
+    if (resizeObserver) resizeObserver.disconnect()
+    for (const cleanup of imageCleanups) cleanup()
+    if (settleInterval) window.clearInterval(settleInterval)
     initializedRails.delete(rail.id)
   })
 }
 
-const setRailEl = (rail: Rail, el: Element | null) => {
+const setRailEl = (rail: Rail, el: any) => {
   if (!el) {
     rail.el = null
     rail.canScrollLeft = false
@@ -304,10 +344,11 @@ const updateScrollButtons = (rail: Rail) => {
     return
   }
 
-  const epsilon = 2
-  const maxScrollLeft = el.scrollWidth - el.clientWidth
-  rail.canScrollLeft = maxScrollLeft > epsilon && el.scrollLeft > epsilon
-  rail.canScrollRight = maxScrollLeft > epsilon && el.scrollLeft < maxScrollLeft - epsilon
+  const threshold = 4
+  const maxScrollLeft = Math.max(0, el.scrollWidth - el.clientWidth)
+  const hasOverflow = el.scrollWidth > el.clientWidth + threshold
+  rail.canScrollLeft = hasOverflow && el.scrollLeft > threshold
+  rail.canScrollRight = hasOverflow && el.scrollLeft + el.clientWidth < el.scrollWidth - threshold
 
   if (!rail.canScrollRight) {
     rail.lastVisibleIndex = -1

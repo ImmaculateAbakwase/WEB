@@ -1,0 +1,424 @@
+.ktube-layout {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+.ktube-hero {
+  padding: 40px 32px 10px;
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 32px;
+}
+
+.ktube-hero-main-title {
+  font-size: 40px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.ktube-hero-subtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  max-width: 520px;
+}
+
+.ktube-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.ktube-hero-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ktube-hero-chip {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-tertiary);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.ktube-hero-panel {
+  padding: 18px 20px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #1b1230 0%, #251038 35%, #3a1028 100%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
+}
+
+.ktube-hero-panel-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.ktube-hero-panel-metric {
+  font-size: 26px;
+  font-weight: 800;
+}
+
+.ktube-hero-panel-caption {
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+
+.ktube-section-header {
+  padding: 0 32px 8px;
+}
+
+.ktube-section-header h2 {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.ktube-section-header p {
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+
+.ktube-dashboard-grid {
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 28px 32px;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+}
+
+.ktube-dashboard-sidebar {
+  border-radius: 18px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  padding: 20px 18px;
+}
+
+.ktube-dashboard-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.ktube-dashboard-channel-name {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.ktube-dashboard-handle {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  margin-bottom: 8px;
+}
+
+.ktube-dashboard-nav {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ktube-dashboard-nav-btn {
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ktube-dashboard-nav-btn:hover {
+  background: rgba(233, 69, 96, 0.12);
+  color: #fff;
+}
+
+.ktube-dashboard-photo-card {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+:root.light .ktube-dashboard-photo-card {
+  border-top-color: rgba(0, 0, 0, 0.08);
+}
+
+.ktube-dashboard-photo-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+  margin-bottom: 10px;
+}
+
+.ktube-dashboard-photo-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.ktube-dashboard-photo-preview {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+:root.light .ktube-dashboard-photo-preview {
+  border-color: rgba(0, 0, 0, 0.12);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.ktube-dashboard-photo-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ktube-dashboard-photo-file {
+  display: none;
+}
+
+.ktube-dashboard-photo-url {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.ktube-dashboard-main {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.ktube-stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.ktube-stat-card {
+  border-radius: 16px;
+  padding: 16px 18px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+}
+
+.ktube-stat-label {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.ktube-stat-value {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.ktube-list-card {
+  border-radius: 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  padding: 14px 16px;
+}
+
+.ktube-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.ktube-list-header h3 {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.ktube-table {
+  width: 100%;
+  border-spacing: 0;
+  font-size: 13px;
+}
+
+.ktube-table th,
+.ktube-table td {
+  padding: 8px 4px;
+}
+
+.ktube-table th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.ktube-table td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.ktube-upload-form,
+.ktube-create-form,
+.ktube-live-form {
+  max-width: 720px;
+  margin: 24px 32px 40px;
+  padding: 20px 22px;
+  border-radius: 18px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+}
+
+.ktube-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 2000;
+}
+
+.ktube-modal {
+  width: min(760px, 100%);
+  border-radius: 22px;
+  background: rgba(15, 15, 25, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(14px);
+}
+
+:root.light .ktube-modal {
+  background: rgba(255, 255, 255, 0.98);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.18);
+}
+
+.ktube-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px 10px;
+}
+
+.ktube-modal-title {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.ktube-modal-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.ktube-modal-close {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+:root.light .ktube-modal-close {
+  border-color: rgba(0, 0, 0, 0.12);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.ktube-create-form.ktube-create-form--modal {
+  max-width: none;
+  margin: 0;
+  padding: 0 22px 18px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+}
+
+.ktube-form-row {
+  margin-bottom: 16px;
+}
+
+.ktube-form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.ktube-form-input,
+.ktube-form-textarea,
+.ktube-form-select {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font-size: 13px;
+  padding: 8px 10px;
+}
+
+.ktube-form-textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.ktube-form-help {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+.ktube-form-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+@media (max-width: 1024px) {
+  .ktube-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .ktube-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .ktube-upload-form,
+  .ktube-create-form,
+  .ktube-live-form {
+    margin-inline: 16px;
+    padding-inline: 14px;
+  }
+}
+
+

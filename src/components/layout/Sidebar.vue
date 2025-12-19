@@ -15,13 +15,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
 import { useAppStore } from '@/stores/app'
 import type { NavRoute } from '@/types'
 
 const appStore = useAppStore()
-const route = useRoute()
 
 const navRoutes: NavRoute[] = [
   { id: 'home', name: 'Home', icon: 'bi-house-door-fill', path: '/' },
@@ -31,6 +28,4 @@ const navRoutes: NavRoute[] = [
   { id: 'gaming', name: 'Gaming', icon: 'bi-controller', path: '/gaming' },
   { id: 'store', name: 'Store', icon: 'bi-shop', path: '/store' }
 ]
-
-const currentTitle = computed(() => route.meta.title as string || 'KFLIX')
 </script>

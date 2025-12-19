@@ -38,3 +38,11 @@ export interface Game {
   players: string
   imageUrl: string
 }
+
+export interface NavRoute {
+  id: string
+  path: string
+  name: string
+  title: string
+  icon: string
+}

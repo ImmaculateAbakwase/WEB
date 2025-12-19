@@ -1,76 +1,143 @@
 <template>
-  <div class="page-header">
-    <div class="header-left">
-      <button class="sidebar-toggle" @click="appStore.toggleSidebar">
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-      </button>
-      
-      <router-link to="/" class="logo-link">
-        <div class="page-logo">
-          <img 
-            :src="logoUrl" 
-            :alt="title + ' Logo'" 
-            class="logo-image"
-          />
-        </div>
-        <h1 class="page-title">{{ title }}</h1>
-      </router-link>
-    </div>
+  <header class="page-header">
+    <div class="page-header-top">
+      <div class="header-left">
+        <router-link to="/" class="logo-link" aria-label="Go to KFLIX">
+          <div class="page-logo">
+            <img src="/logo.png" :alt="routeTitle + ' Logo'" class="logo-image" />
+          </div>
+          <div v-if="!isHome" class="brand-title">
+            <span class="brand-text">KFLIX</span>
+            <span v-if="sectionLabel" class="brand-section">{{ sectionLabel }}</span>
+          </div>
+        </router-link>
+      </div>
 
-    <div class="header-center">
-      <div class="search-container">
-        <input 
-          type="text" 
-          class="search-input" 
-          placeholder="Search"
-          v-model="searchQuery"
-          @keyup.enter="handleSearch"
-        />
-        <button class="search-button" @click="handleSearch">
-          <i class="bi-search"></i>
+      <div class="header-center">
+        <div class="search-container">
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Search movies, music, games..."
+            v-model="searchQuery"
+            @keyup.enter="handleSearch"
+          />
+          <button class="search-button" type="button" @click="handleSearch">
+            <i class="bi-search"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <button
+          class="theme-toggle"
+          @click="themeStore.toggleTheme"
+          :aria-pressed="!themeStore.isDark"
+          title="Toggle theme"
+          type="button"
+        >
+          <span class="theme-toggle-track">
+            <span
+              class="theme-toggle-thumb"
+              :class="{ 'theme-toggle-thumb--light': !themeStore.isDark }"
+            ></span>
+          </span>
         </button>
+
+        <button class="icon-button" title="Notifications" type="button">
+          <i class="bi-bell"></i>
+        </button>
+
+        <div ref="profileWrapper" class="profile-wrapper">
+          <button
+            class="profile-button"
+            type="button"
+            :title="isLoggedIn ? 'Account' : 'Sign in'"
+            aria-haspopup="menu"
+            :aria-expanded="isProfileMenuOpen"
+            @click.stop="toggleProfileMenu"
+          >
+            <span v-if="isLoggedIn" class="profile-initials">{{ userStore.initials }}</span>
+            <i v-else class="bi-person-circle" style="font-size: 22px"></i>
+          </button>
+
+          <div v-if="isProfileMenuOpen" class="profile-menu" role="menu">
+            <div class="profile-menu-header">
+              {{ isLoggedIn ? 'Account' : 'Welcome' }}
+            </div>
+
+            <template v-if="!isLoggedIn">
+              <button class="profile-menu-item" type="button" role="menuitem" @click="openLogin">
+                <i class="bi-box-arrow-in-right"></i>
+                Sign in
+              </button>
+              <button class="profile-menu-item" type="button" role="menuitem" @click="openSignup">
+                <i class="bi-person-plus"></i>
+                Create account
+              </button>
+            </template>
+
+            <template v-else>
+              <div class="profile-menu-divider"></div>
+              <button class="profile-menu-item danger" type="button" role="menuitem" @click="logout">
+                <i class="bi-box-arrow-right"></i>
+                Logout
+              </button>
+            </template>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="header-right">
-      <button class="theme-toggle" @click="themeStore.toggleTheme" :aria-pressed="!themeStore.isDark" title="Toggle theme">
-        <span class="theme-toggle-track">
-          <span
-            class="theme-toggle-thumb"
-            :class="{ 'theme-toggle-thumb--light': !themeStore.isDark }"
-          ></span>
-        </span>
-      </button>
-      <button class="icon-button" title="Notifications">
-        <i class="bi-bell"></i>
-      </button>
-      <button class="profile-button" title="Sign In" @click="goToLogin">
-        <i class="bi-person-circle"></i>
-        <span class="profile-label">Signin</span>
-      </button>
+    <div class="primary-nav-bar">
+      <nav class="primary-nav" aria-label="Primary navigation">
+        <router-link v-for="item in navItems" :key="item.to" :to="item.to" class="nav-pill">
+          {{ item.label }}
+        </router-link>
+      </nav>
     </div>
-  </div>
+  </header>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAppStore } from '@/stores/app'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import { useAuthModalStore } from '@/stores/authModal'
 import { useThemeStore } from '@/stores/theme'
-import logo from '@/assets/images/logo.png'
+import { useUserStore } from '@/stores/user'
 
-defineProps<{
-  logoUrl?: string
+const props = defineProps<{
+  logo?: string
   title: string
 }>()
 
-const appStore = useAppStore()
+const authModal = useAuthModalStore()
 const themeStore = useThemeStore()
-const logoUrl = logo
+const userStore = useUserStore()
+const route = useRoute()
 const searchQuery = ref('')
-const router = useRouter()
+
+const navItems = [
+  { label: 'KFLIX', to: '/' },
+  { label: 'K-MOVIES', to: '/movies' },
+  { label: 'K-TUBE', to: '/k-tube' },
+  { label: 'K-MUSIC', to: '/music' },
+  { label: 'GAMES', to: '/gaming' },
+  { label: 'KFLIX LIVE', to: '/live' },
+  { label: 'PPV', to: '/ppv' },
+] as const
+
+const isHome = computed(() => route.path === '/')
+const routeTitle = computed(() => (route.meta.title as string | undefined) ?? props.title)
+const sectionLabel = computed(() => {
+  const raw = (routeTitle.value || '').trim()
+  if (!raw || raw.toUpperCase() === 'KFLIX') return ''
+  const withoutBrand = raw.replace(/^KFLIX\s*/i, '').trim()
+  return withoutBrand || raw
+})
+const isLoggedIn = computed(() => Boolean(userStore.currentUser))
+const isProfileMenuOpen = ref(false)
+const profileWrapper = ref<HTMLElement | null>(null)
 
 const handleSearch = () => {
   if (searchQuery.value.trim()) {
@@ -79,286 +146,47 @@ const handleSearch = () => {
   }
 }
 
-const goToLogin = (): void => {
-  router.push('/auth/login')
+const toggleProfileMenu = () => {
+  isProfileMenuOpen.value = !isProfileMenuOpen.value
 }
+
+const closeProfileMenu = () => {
+  isProfileMenuOpen.value = false
+}
+
+const openLogin = () => {
+  closeProfileMenu()
+  authModal.open('login')
+}
+
+const openSignup = () => {
+  closeProfileMenu()
+  authModal.open('signup')
+}
+
+const logout = () => {
+  userStore.logout()
+  closeProfileMenu()
+}
+
+const onDocumentClick = (e: MouseEvent) => {
+  if (!isProfileMenuOpen.value) return
+  const wrapper = profileWrapper.value
+  const target = e.target as Node | null
+  if (!wrapper || !target) {
+    closeProfileMenu()
+    return
+  }
+  if (!wrapper.contains(target)) closeProfileMenu()
+}
+
+onMounted(() => {
+  document.addEventListener('click', onDocumentClick)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', onDocumentClick)
+})
 </script>
 
-<style scoped>
-.page-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 20px;
-  background: #0a0a0a;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  z-index: 1000;
-  height: 60px;
-}
-
-/* Left Section */
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex: 0 0 auto;
-}
-
-.sidebar-toggle {
-  width: 40px;
-  height: 40px;
-  background: transparent;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 4px;
-  transition: all 0.3s;
-  padding: 8px;
-  flex-shrink: 0;
-}
-
-.sidebar-toggle:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.sidebar-toggle .bar {
-  width: 18px;
-  height: 2px;
-  background: white;
-  border-radius: 2px;
-  transition: all 0.3s;
-}
-
-.logo-link {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  text-decoration: none;
-  color: white;
-}
-
-.page-logo {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  background: linear-gradient(135deg, #e94560 0%, #8b2635 100%);
-  flex-shrink: 0;
-}
-
-.logo-image {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.page-title {
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-}
-
-/* Center Section - Search */
-.header-center {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  max-width: 600px;
-  margin: 0 40px;
-}
-
-.search-container {
-  display: flex;
-  width: 100%;
-  max-width: 600px;
-}
-
-.search-input {
-  flex: 1;
-  padding: 10px 16px;
-  background: #121212;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-right: none;
-  border-radius: 20px 0 0 20px;
-  color: white;
-  font-size: 14px;
-  outline: none;
-  transition: all 0.3s;
-}
-
-.search-input:focus {
-  border-color: #e94560;
-  background: #1a1a1a;
-}
-
-.search-input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.search-button {
-  padding: 0 24px;
-  background: #1a1a1a;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-left: none;
-  border-radius: 0 20px 20px 0;
-  color: rgba(255, 255, 255, 0.7);
-  cursor: pointer;
-  transition: all 0.3s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.search-button:hover {
-  background: #2a2a2a;
-  color: white;
-}
-
-.search-button i {
-  font-size: 18px;
-}
-
-/* Right Section */
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 0 0 auto;
-}
-
-.theme-toggle {
-  width: 52px;
-  height: 28px;
-  padding: 0;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  background: #121212;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.25s ease, border-color 0.25s ease;
-}
-
-.theme-toggle:hover {
-  background: #1f1f1f;
-  border-color: rgba(255, 255, 255, 0.4);
-}
-
-.theme-toggle-track {
-  width: 40px;
-  height: 18px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.18);
-  position: relative;
-}
-
-.theme-toggle-thumb {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: #ffffff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
-  transition: transform 0.25s ease;
-}
-
-.theme-toggle-thumb--light {
-  transform: translateX(18px);
-}
-
-.icon-button {
-  width: 40px;
-  height: 40px;
-  background: transparent;
-  border: none;
-  border-radius: 50%;
-  color: white;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s;
-}
-
-.icon-button:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.icon-button i {
-  font-size: 22px;
-}
-
-.profile-button {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  width: 48px;
-  height: 48px;
-  background: transparent;
-  border: none;
-  border-radius: 50%;
-  color: white;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.profile-button:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.profile-label {
-  font-size: 10px;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .page-header {
-    padding: 10px 15px;
-  }
-
-  .header-center {
-    margin: 0 20px;
-  }
-
-  .page-title {
-    font-size: 18px;
-  }
-}
-
-@media (max-width: 640px) {
-  .page-title {
-    display: none;
-  }
-
-  .header-center {
-    margin: 0 15px;
-  }
-}
-
-@media (max-width: 480px) {
-  .header-center {
-    display: none;
-  }
-  
-  .header-right {
-    gap: 4px;
-  }
-}
-</style>
+<style src="@/assets/styles/PageHeader.css"></style>

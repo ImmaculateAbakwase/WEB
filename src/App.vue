@@ -1,19 +1,23 @@
 <template>
   <div class="app-container">
-    <Sidebar />
     <router-view />
+    <AuthModal v-if="authModal.isOpen" />
   </div>
 </template>
 
 <script setup lang="ts">
-import Sidebar from '@/components/layout/Sidebar.vue'
+import { useAuthModalStore } from '@/stores/authModal'
+import AuthModal from '@/components/auth/AuthModal.vue'
+
+const authModal = useAuthModalStore()
 </script>
 
 <style scoped>
 .app-container {
   display: flex;
   min-height: 100vh;
-  background: #0a0a0a;
-  color: #fff;
+  width: 100%;
+  background: transparent;
+  color: inherit;
 }
 </style>

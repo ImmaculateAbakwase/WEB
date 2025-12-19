@@ -27,18 +27,24 @@
       </div>
     </div>
 
-    <!-- Filter Tabs -->
+    <!-- Category Chips -->
     <div class="filter-section">
-      <div class="filter-tabs">
-        <button class="filter-tab active">All Movies</button>
-        <button class="filter-tab">New Releases</button>
-        <button class="filter-tab">Trending</button>
-        <button class="filter-tab">Top Rated</button>
+      <div class="movie-category-scroll">
+        <button
+          v-for="category in categories"
+          :key="category.id"
+          type="button"
+          class="movie-category-chip"
+          :class="{ 'movie-category-chip--active': activeCategory === category.id }"
+          @click="activeCategory = category.id"
+        >
+          {{ category.label }}
+        </button>
       </div>
     </div>
 
     <!-- Movie Rails -->
-    <div v-for="rail in rails" :key="rail.id" class="content-section">
+    <div v-for="rail in visibleRails" :key="rail.id" class="content-section">
       <SectionHeader :title="rail.title" :show-view-all="true" />
 
       <div class="horizontal-scroll-wrapper">
@@ -82,17 +88,15 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAppStore } from '@/stores/app'
-import { useContentStore, type Movie } from '@/stores/content'
 import PageHeader from '@/components/layout/PageHeader.vue'
 import SectionHeader from '@/components/home/SectionHeader.vue'
 import ContentCard from '@/components/home/ContentCard.vue'
 
 const route = useRoute()
 const appStore = useAppStore()
-const contentStore = useContentStore()
 
 type RailId =
   | 'trending'
@@ -225,6 +229,29 @@ const rails = ref<Rail[]>([
   buildRail('international', '🌍 International Cinema', allMovies.filter((m) => m.id >= 1100)),
 ])
 
+const categories = [
+  { id: 'all', label: 'All' },
+  { id: 'trending', label: 'Trending' },
+  { id: 'newReleases', label: 'New Releases' },
+  { id: 'action', label: 'Action' },
+  { id: 'comedy', label: 'Comedy' },
+  { id: 'drama', label: 'Drama' },
+  { id: 'sciFi', label: 'Sci‑Fi' },
+  { id: 'horror', label: 'Horror' },
+  { id: 'romance', label: 'Romance' },
+  { id: 'thriller', label: 'Thriller' },
+  { id: 'animation', label: 'Animation' },
+  { id: 'documentary', label: 'Documentary' },
+  { id: 'international', label: 'International' },
+]
+
+const activeCategory = ref<string>('all')
+
+const visibleRails = computed(() => {
+  if (activeCategory.value === 'all') return rails.value
+  return rails.value.filter((rail) => rail.id === activeCategory.value)
+})
+
 const initializedRails = new Set<RailId>()
 const dragCleanups: (() => void)[] = []
 const scrollStateCleanups: (() => void)[] = []
@@ -269,12 +296,22 @@ const enableDragScroll = (el: HTMLElement) => {
     moved = false
   }
 
+  const onWheel = (e: WheelEvent) => {
+    const hasOverflow = el.scrollWidth > el.clientWidth + 1
+    if (!hasOverflow) return
+
+    if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return
+    e.preventDefault()
+    el.scrollLeft += e.deltaY
+  }
+
   el.addEventListener('pointerdown', onPointerDown)
   el.addEventListener('pointermove', onPointerMove)
   el.addEventListener('pointerup', stop)
   el.addEventListener('pointercancel', stop)
   el.addEventListener('pointerleave', stop)
   el.addEventListener('click', onClickCapture, true)
+  el.addEventListener('wheel', onWheel, { passive: false })
 
   dragCleanups.push(() => {
     el.removeEventListener('pointerdown', onPointerDown)
@@ -283,6 +320,7 @@ const enableDragScroll = (el: HTMLElement) => {
     el.removeEventListener('pointercancel', stop)
     el.removeEventListener('pointerleave', stop)
     el.removeEventListener('click', onClickCapture, true)
+    el.removeEventListener('wheel', onWheel as any)
   })
 }
 
@@ -294,14 +332,50 @@ const setupRailRuntime = (rail: Rail, el: HTMLElement) => {
   el.addEventListener('scroll', update, { passive: true })
   window.addEventListener('resize', update)
 
+  let resizeObserver: ResizeObserver | null = null
+  if (typeof window !== 'undefined' && 'ResizeObserver' in window) {
+    resizeObserver = new ResizeObserver(() => update())
+    resizeObserver.observe(el)
+  }
+
+  const imageCleanups: (() => void)[] = []
+  const images = Array.from(el.querySelectorAll('img'))
+  for (const img of images) {
+    const onImg = () => update()
+    if (!img.complete) {
+      img.addEventListener('load', onImg, { once: true })
+      img.addEventListener('error', onImg, { once: true })
+      imageCleanups.push(() => {
+        img.removeEventListener('load', onImg)
+        img.removeEventListener('error', onImg)
+      })
+    }
+  }
+
+  let settleInterval: number | null = null
+  if (typeof window !== 'undefined') {
+    let ticks = 0
+    settleInterval = window.setInterval(() => {
+      update()
+      ticks += 1
+      if (ticks > 16 && settleInterval) {
+        window.clearInterval(settleInterval)
+        settleInterval = null
+      }
+    }, 250)
+  }
+
   scrollStateCleanups.push(() => {
     el.removeEventListener('scroll', update)
     window.removeEventListener('resize', update)
+    if (resizeObserver) resizeObserver.disconnect()
+    for (const cleanup of imageCleanups) cleanup()
+    if (settleInterval) window.clearInterval(settleInterval)
     initializedRails.delete(rail.id)
   })
 }
 
-const setRailEl = (rail: Rail, el: Element | null) => {
+const setRailEl = (rail: Rail, el: any) => {
   if (!el) {
     rail.el = null
     rail.canScrollLeft = false
@@ -351,10 +425,11 @@ const updateScrollButtons = (rail: Rail) => {
     return
   }
 
-  const epsilon = 2
-  const maxScrollLeft = el.scrollWidth - el.clientWidth
-  rail.canScrollLeft = maxScrollLeft > epsilon && el.scrollLeft > epsilon
-  rail.canScrollRight = maxScrollLeft > epsilon && el.scrollLeft < maxScrollLeft - epsilon
+  const threshold = 4
+  const maxScrollLeft = Math.max(0, el.scrollWidth - el.clientWidth)
+  const hasOverflow = el.scrollWidth > el.clientWidth + threshold
+  rail.canScrollLeft = hasOverflow && el.scrollLeft > threshold
+  rail.canScrollRight = hasOverflow && el.scrollLeft + el.clientWidth < el.scrollWidth - threshold
 
   if (!rail.canScrollRight) {
     rail.lastVisibleIndex = -1

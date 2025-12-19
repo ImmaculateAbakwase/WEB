@@ -104,17 +104,17 @@ html {
 
 /* EXPANDED SIDEBAR STYLES */
 .sidebar.expanded .nav-item {
-  padding: 10px 14px;
+  padding: 12px 16px;
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 20px;
   color: var(--text-secondary);
   text-decoration: none;
   transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
   cursor: pointer;
   border-radius: 10px;
   border: 1px solid transparent;
-  margin: 0 10px;
+  margin: 0 12px;
 }
 
 .sidebar.expanded .nav-item:hover {
@@ -130,31 +130,31 @@ html {
 }
 
 .sidebar.expanded .nav-item i {
-  font-size: 24px;
-  width: 24px;
+  font-size: 28px;
+  width: 28px;
   text-align: center;
   flex-shrink: 0;
 }
 
 .sidebar.expanded .nav-label {
-  font-size: 16px;
+  font-size: 18px;
   white-space: nowrap;
 }
 
 /* COLLAPSED SIDEBAR STYLES */
 .sidebar.collapsed .nav-item {
-  padding: 12px 4px;
+  padding: 14px 4px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   color: var(--text-secondary);
   text-decoration: none;
   transition: background 0.18s ease, color 0.18s ease;
   cursor: pointer;
   border-left: none;
-  margin: 0 4px 8px;
+  margin: 0 4px 10px;
 }
 
 .sidebar.collapsed .nav-item:hover {
@@ -169,14 +169,14 @@ html {
 }
 
 .sidebar.collapsed .nav-item i {
-  font-size: 26px;
+  font-size: 30px;
   width: auto;
   text-align: center;
   flex-shrink: 0;
 }
 
 .sidebar.collapsed .nav-label {
-  font-size: 10px;
+  font-size: 12px;
   text-align: center;
   line-height: 1.2;
   white-space: nowrap;
@@ -187,31 +187,29 @@ html {
    MAIN CONTENT
    ========================================== */
 .main-content {
-  padding-top: 60px;
-  transition: margin-left 0.3s ease, background-color 0.3s ease;
+  padding-top: 104px;
+  transition: background-color 0.3s ease;
   min-height: 100vh;
   background: var(--bg-primary);
+  margin-left: 0;
 }
 
-.main-content.expanded {
-  margin-left: 260px;
-}
-
+.main-content.expanded,
 .main-content.collapsed {
-  margin-left: 80px;
+  margin-left: 0;
 }
 
 /* ==========================================
    HERO CAROUSEL
    ========================================== */
 .hero-carousel {
-  height: 600px;
+  height: 480px;
   position: relative;
   overflow: hidden;
 }
 
 .carousel-item {
-  height: 600px;
+  height: 480px;
 }
 
 .carousel-slide {
@@ -291,7 +289,121 @@ html {
    CONTENT SECTIONS
    ========================================== */
 .content-section {
-  padding: 40px 40px 40px 24px;
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 28px 32px 40px;
+}
+
+.landing-hero {
+  width: 100%;
+  padding: 22px 0 0;
+}
+
+.landing-hero-inner {
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 34px 32px;
+  border-radius: 22px;
+  position: relative;
+  overflow: hidden;
+  min-height: 280px;
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 24px;
+  align-items: end;
+  background: radial-gradient(1200px 520px at 18% 0%, rgba(233, 69, 96, 0.25), transparent 60%),
+    radial-gradient(900px 420px at 85% 30%, rgba(82, 145, 255, 0.22), transparent 55%),
+    linear-gradient(135deg, rgba(20, 20, 30, 0.92) 0%, rgba(10, 10, 15, 0.96) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 18px 70px rgba(0, 0, 0, 0.55);
+}
+
+:root.light .landing-hero-inner {
+  background: radial-gradient(1200px 520px at 18% 0%, rgba(233, 69, 96, 0.14), transparent 60%),
+    radial-gradient(900px 420px at 85% 30%, rgba(82, 145, 255, 0.12), transparent 55%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(245, 245, 250, 0.98) 100%);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.14);
+}
+
+.landing-hero-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+:root.light .landing-hero-kicker {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.12);
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.landing-hero-title {
+  font-size: 44px;
+  font-weight: 900;
+  margin: 12px 0 10px;
+  line-height: 1.02;
+}
+
+.landing-hero-subtitle {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.82);
+  max-width: 620px;
+  margin: 0;
+}
+
+:root.light .landing-hero-subtitle {
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.landing-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.landing-hero-stats {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.landing-hero-stat {
+  padding: 14px 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+:root.light .landing-hero-stat {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.landing-hero-stat-value {
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.landing-hero-stat-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+:root.light .landing-hero-stat-label {
+  color: rgba(0, 0, 0, 0.6);
 }
 
 .section-header {
@@ -453,7 +565,7 @@ html {
    ========================================== */
 .horizontal-scroll {
   display: flex;
-  gap: 16px;
+  gap: 22px;
   flex: 1;
   min-width: 0;
   width: 100%;
@@ -492,7 +604,8 @@ html {
   cursor: grab;
   user-select: none;
   -webkit-user-select: none;
-  touch-action: pan-y;
+  touch-action: pan-x;
+  overscroll-behavior-x: contain;
 }
 
 .horizontal-scroll.draggable.dragging {
@@ -723,6 +836,52 @@ html {
 }
 
 /* ==========================================
+   MOVIES: CATEGORY CHIPS
+   ========================================== */
+.filter-section {
+  padding: 0 50px 24px 32px;
+}
+
+.movie-category-scroll {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.movie-category-scroll::-webkit-scrollbar {
+  height: 0;
+}
+
+.movie-category-chip {
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  background: rgba(20, 20, 25, 0.9);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.movie-category-chip:hover {
+  background: rgba(233, 69, 96, 0.14);
+  border-color: rgba(233, 69, 96, 0.35);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.movie-category-chip--active {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+  box-shadow: 0 0 22px rgba(255, 255, 255, 0.18);
+}
+
+/* ==========================================
    RESPONSIVE DESIGN
    ========================================== */
 @media (max-width: 768px) {
@@ -756,6 +915,16 @@ html {
 
   .content-section {
     padding: 20px 20px 20px 14px;
+  }
+
+  .landing-hero-inner {
+    padding: 24px 18px;
+    grid-template-columns: 1fr;
+    min-height: 240px;
+  }
+
+  .landing-hero-title {
+    font-size: 34px;
   }
 
   .card-grid {
@@ -827,6 +996,62 @@ html {
    ========================================== */
 .text-warning {
   color: #ffc107;
+}
+
+.ktube-form-row {
+  margin-bottom: 16px;
+}
+
+.ktube-form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--text-secondary);
+}
+
+.ktube-form-input,
+.ktube-form-textarea,
+.ktube-form-select {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font-size: 14px;
+  padding: 10px 12px;
+  outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.ktube-form-input::placeholder,
+.ktube-form-textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+.ktube-form-input:focus,
+.ktube-form-textarea:focus,
+.ktube-form-select:focus {
+  border-color: rgba(233, 69, 96, 0.7);
+  box-shadow: 0 0 0 4px rgba(233, 69, 96, 0.18);
+}
+
+.ktube-form-textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.ktube-form-help {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-top: 4px;
+}
+
+.ktube-form-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 12px;
 }
 
 /* Smooth scrolling */

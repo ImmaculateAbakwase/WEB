@@ -47,22 +47,36 @@ export const useContentStore = defineStore('content', {
       {
         id: 1,
         title: 'Dune: Part Two',
-        description: 'Paul Atreides unites with Chani and the Fremen while seeking revenge against the conspirators who destroyed his family.',
-        badge: 'NEW RELEASE',
+        description: 'Step into an epic sci‑fi saga and experience cinema at its most immersive.',
+        badge: 'FEATURED MOVIE',
         imageUrl: 'https://image.tmdb.org/t/p/original/xOMo8BRK7PfcJv9JCnx7s5hj0PX.jpg'
       },
       {
         id: 2,
-        title: 'Oppenheimer',
-        description: 'The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb.',
-        badge: 'AWARD WINNER',
-        imageUrl: 'https://image.tmdb.org/t/p/original/fm6KqXpk3M2HVveHwCrBSSBaO0V.jpg'
+        title: 'Global Afrobeats Live',
+        description: 'Non‑stop Afrobeats from the biggest stages across the continent, streaming in HD.',
+        badge: 'MUSIC LIVE',
+        imageUrl: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1600'
       },
       {
         id: 3,
+        title: 'Esports Arena Night',
+        description: 'Top creators and pro teams battle it out across your favourite games.',
+        badge: 'GAMING EVENT',
+        imageUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1600'
+      },
+      {
+        id: 4,
+        title: 'Oppenheimer',
+        description: 'The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb.',
+        badge: 'AWARD MOVIE',
+        imageUrl: 'https://image.tmdb.org/t/p/original/fm6KqXpk3M2HVveHwCrBSSBaO0V.jpg'
+      },
+      {
+        id: 5,
         title: 'The Batman',
-        description: 'When a killer targets Gotham\'s elite with a series of sadistic machinations, Batman must investigate corruption.',
-        badge: 'TRENDING',
+        description: 'Gotham’s vigilante uncovers a trail of corruption while hunting a cryptic killer.',
+        badge: 'TRENDING MOVIE',
         imageUrl: 'https://image.tmdb.org/t/p/original/b0PlSFdDwbyK0cf5RxwDpaOJQvQ.jpg'
       }
     ] as HeroSlide[],
